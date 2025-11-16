@@ -1,18 +1,15 @@
-export const config = { api: { bodyParser: true } };
-
 export default async function handler(req, res) {
   try {
-    if (req.method === "GET") return res.status(200).send("Webhook OK");
+    console.log("Webhook recebido:", req.body);
 
-    if (req.method === "POST") {
-      const data = req.body;
-      console.log("Webhook recebido:", JSON.stringify(data));
-      return res.status(200).json({ received: true });
+    // MP envia várias notificações diferentes — você filtra
+    if (req.body.type === "payment") {
+      console.log("Pagamento confirmado:", req.body.data.id);
     }
 
-    return res.status(405).json({ error: "Método não permitido" });
-  } catch (error) {
-    console.error("Erro no webhook:", error);
-    return res.status(500).json({ error: "Erro interno" });
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.log("Erro Webhook:", err);
+    return res.status(500).json({ error: "Erro no webhook" });
   }
 }
